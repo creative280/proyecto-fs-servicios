@@ -257,6 +257,6 @@ El proyecto sirve como base para futuras implementaciones más complejas y demue
 
 ---
 
-**Proyecto desarrollado para 7mo semestre de Ingeniería de Software**  
+**Proyecto desarrollado**  
 **Fecha**: Septiembre 2025  
 **Autor**: Alejandro Taborda Sepúlveda
