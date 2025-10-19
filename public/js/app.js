@@ -131,6 +131,40 @@ function App() {
         }
     };
 
+    // Función para leer logs
+    const leerLogs = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/leer-log');
+            await handleApiResponse(response, 'Lectura de Logs');
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error de conexión',
+                data: { error: error.message }
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Función para obtener estadísticas de logs
+    const obtenerEstadisticasLogs = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/estadisticas-logs');
+            await handleApiResponse(response, 'Estadísticas de Logs');
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error de conexión',
+                data: { error: error.message }
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Componente del menú principal
     const MenuPrincipal = () => (
         <div className="fade-in">
@@ -168,6 +202,12 @@ function App() {
                     <span className="icon">📋</span>
                     <h3>Listar Archivos</h3>
                     <p>Ver todos los archivos disponibles</p>
+                </div>
+                
+                <div className="menu-item" onClick={() => setCurrentView('logs')}>
+                    <span className="icon">📊</span>
+                    <h3>Sistema de Logs</h3>
+                    <p>Ver logs del servidor y estadísticas</p>
                 </div>
             </div>
         </div>
@@ -390,6 +430,286 @@ function App() {
         </div>
     );
 
+    // Estado para la administración de logs
+    const [logsData, setLogsData] = useState(null);
+    const [filtros, setFiltros] = useState({
+        metodo: '',
+        fechaInicio: '',
+        fechaFin: '',
+        urlContiene: ''
+    });
+    const [terminoBusqueda, setTerminoBusqueda] = useState('');
+    const [resultadosBusqueda, setResultadosBusqueda] = useState(null);
+
+    // Función para filtrar logs
+    const filtrarLogs = async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
+            if (filtros.metodo) params.append('metodo', filtros.metodo);
+            if (filtros.fechaInicio) params.append('fecha_inicio', filtros.fechaInicio);
+            if (filtros.fechaFin) params.append('fecha_fin', filtros.fechaFin);
+            if (filtros.urlContiene) params.append('url_contiene', filtros.urlContiene);
+
+            const response = await fetch(`/filtrar-logs?${params}`);
+            const data = await response.json();
+            setLogsData(data);
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error al filtrar logs',
+                data: { error: error.message }
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Función para buscar en logs
+    const buscarEnLogs = async () => {
+        if (!terminoBusqueda.trim()) return;
+        
+        setLoading(true);
+        try {
+            const response = await fetch(`/buscar-logs?termino=${encodeURIComponent(terminoBusqueda)}`);
+            const data = await response.json();
+            setResultadosBusqueda(data);
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error en búsqueda',
+                data: { error: error.message }
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Función para limpiar logs antiguos
+    const limpiarLogsAntiguos = async (dias = 30) => {
+        if (!confirm(`¿Estás seguro de que quieres eliminar logs más antiguos que ${dias} días?`)) {
+            return;
+        }
+        
+        setLoading(true);
+        try {
+            const response = await fetch(`/limpiar-logs?dias_antiguedad=${dias}`, { method: 'DELETE' });
+            const data = await response.json();
+            setResult({
+                type: 'success',
+                title: 'Logs limpiados',
+                data: data
+            });
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error al limpiar logs',
+                data: { error: error.message }
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Función para exportar logs
+    const exportarLogs = async (formato) => {
+        try {
+            const response = await fetch(`/exportar-logs?formato=${formato}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `logs-${new Date().toISOString().split('T')[0]}.${formato}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            setResult({
+                type: 'error',
+                title: 'Error al exportar',
+                data: { error: error.message }
+            });
+        }
+    };
+
+    // Componente para sistema de logs avanzado
+    const SistemaLogs = () => (
+        <div className="fade-in">
+            <div className="logs-admin-container">
+                <h2>📊 Administración Avanzada de Logs</h2>
+                <p>Sistema completo para gestión, análisis y administración de logs del servidor</p>
+                
+                {/* Panel de acciones principales */}
+                <div className="logs-main-actions">
+                    <button className="btn btn-primary" onClick={leerLogs} disabled={loading}>
+                        {loading ? 'Cargando...' : '📖 Leer Logs Completos'}
+                    </button>
+                    <button className="btn btn-info" onClick={obtenerEstadisticasLogs} disabled={loading}>
+                        {loading ? 'Cargando...' : '📈 Ver Estadísticas'}
+                    </button>
+                    <button className="btn btn-secondary" onClick={() => setCurrentView('menu')}>
+                        Volver al Menú
+                    </button>
+                </div>
+
+                {/* Panel de filtros */}
+                <div className="logs-filters">
+                    <h3>🔍 Filtros Avanzados</h3>
+                    <div className="filters-grid">
+                        <div className="filter-group">
+                            <label>Método HTTP:</label>
+                            <select 
+                                value={filtros.metodo} 
+                                onChange={(e) => setFiltros({...filtros, metodo: e.target.value})}
+                            >
+                                <option value="">Todos</option>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="PUT">PUT</option>
+                            </select>
+                        </div>
+                        
+                        <div className="filter-group">
+                            <label>Fecha Inicio:</label>
+                            <input 
+                                type="date" 
+                                value={filtros.fechaInicio}
+                                onChange={(e) => setFiltros({...filtros, fechaInicio: e.target.value})}
+                            />
+                        </div>
+                        
+                        <div className="filter-group">
+                            <label>Fecha Fin:</label>
+                            <input 
+                                type="date" 
+                                value={filtros.fechaFin}
+                                onChange={(e) => setFiltros({...filtros, fechaFin: e.target.value})}
+                            />
+                        </div>
+                        
+                        <div className="filter-group">
+                            <label>URL contiene:</label>
+                            <input 
+                                type="text" 
+                                placeholder="ej: /archivos"
+                                value={filtros.urlContiene}
+                                onChange={(e) => setFiltros({...filtros, urlContiene: e.target.value})}
+                            />
+                        </div>
+                    </div>
+                    
+                    <button className="btn btn-success" onClick={filtrarLogs} disabled={loading}>
+                        🔍 Aplicar Filtros
+                    </button>
+                </div>
+
+                {/* Panel de búsqueda */}
+                <div className="logs-search">
+                    <h3>🔎 Búsqueda en Logs</h3>
+                    <div className="search-group">
+                        <input 
+                            type="text" 
+                            placeholder="Buscar término en logs..."
+                            value={terminoBusqueda}
+                            onChange={(e) => setTerminoBusqueda(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && buscarEnLogs()}
+                        />
+                        <button className="btn btn-info" onClick={buscarEnLogs} disabled={loading || !terminoBusqueda.trim()}>
+                            🔍 Buscar
+                        </button>
+                    </div>
+                </div>
+
+                {/* Panel de gestión */}
+                <div className="logs-management">
+                    <h3>⚙️ Gestión de Logs</h3>
+                    <div className="management-actions">
+                        <button className="btn btn-warning" onClick={() => limpiarLogsAntiguos(7)}>
+                            🗑️ Limpiar Logs (7 días)
+                        </button>
+                        <button className="btn btn-warning" onClick={() => limpiarLogsAntiguos(30)}>
+                            🗑️ Limpiar Logs (30 días)
+                        </button>
+                        <button className="btn btn-success" onClick={() => exportarLogs('json')}>
+                            📄 Exportar JSON
+                        </button>
+                        <button className="btn btn-success" onClick={() => exportarLogs('csv')}>
+                            📊 Exportar CSV
+                        </button>
+                    </div>
+                </div>
+
+                {/* Resultados de filtros */}
+                {logsData && (
+                    <div className="logs-results">
+                        <h3>📋 Resultados de Filtros</h3>
+                        <div className="results-info">
+                            <p><strong>Total encontrados:</strong> {logsData.logs?.length || 0}</p>
+                            <p><strong>Filtros aplicados:</strong> {JSON.stringify(logsData.filtros)}</p>
+                        </div>
+                        <div className="logs-list">
+                            {logsData.logs?.slice(0, 50).map((log, index) => (
+                                <div key={index} className="log-entry">
+                                    <span className="log-fecha">{log.fecha}</span>
+                                    <span className="log-metodo">{log.metodo}</span>
+                                    <span className="log-url">{log.url}</span>
+                                </div>
+                            ))}
+                            {logsData.logs?.length > 50 && (
+                                <p className="more-results">... y {logsData.logs.length - 50} más</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Resultados de búsqueda */}
+                {resultadosBusqueda && (
+                    <div className="search-results">
+                        <h3>🔎 Resultados de Búsqueda</h3>
+                        <div className="results-info">
+                            <p><strong>Término:</strong> "{resultadosBusqueda.termino}"</p>
+                            <p><strong>Total encontrados:</strong> {resultadosBusqueda.total}</p>
+                        </div>
+                        <div className="logs-list">
+                            {resultadosBusqueda.resultados?.slice(0, 20).map((resultado, index) => (
+                                <div key={index} className="log-entry search-result">
+                                    <span className="log-numero">#{resultado.numero}</span>
+                                    <span className="log-linea">{resultado.linea}</span>
+                                </div>
+                            ))}
+                            {resultadosBusqueda.resultados?.length > 20 && (
+                                <p className="more-results">... y {resultadosBusqueda.resultados.length - 20} más</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Información del sistema */}
+                <div className="logs-info">
+                    <h3>🔗 URLs de Administración Disponibles:</h3>
+                    <ul>
+                        <li><code>GET /leer-log</code> - Leer archivo de logs completo</li>
+                        <li><code>GET /estadisticas-logs</code> - Obtener estadísticas de logs</li>
+                        <li><code>GET /filtrar-logs</code> - Filtrar logs por criterios</li>
+                        <li><code>GET /buscar-logs</code> - Buscar término en logs</li>
+                        <li><code>DELETE /limpiar-logs</code> - Limpiar logs antiguos</li>
+                        <li><code>GET /exportar-logs</code> - Exportar logs (JSON/CSV)</li>
+                    </ul>
+                    
+                    <h3>📝 Información Registrada en Logs:</h3>
+                    <ul>
+                        <li>✅ Fecha y hora de cada petición</li>
+                        <li>✅ Método HTTP utilizado (GET, POST, DELETE)</li>
+                        <li>✅ URL accedida</li>
+                        <li>✅ Dirección IP del cliente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    );
+
     // Renderizado condicional
     const renderCurrentView = () => {
         switch (currentView) {
@@ -403,6 +723,8 @@ function App() {
                 return <DeleteFileForm />;
             case 'list':
                 return <FileList />;
+            case 'logs':
+                return <SistemaLogs />;
             default:
                 return <MenuPrincipal />;
         }

@@ -1,0 +1,40 @@
+=== SISTEMA DE LOGS ===
+Fecha de inicio: 2025-10-19T21:56:43.713Z
+Servidor: File System API
+========================================
+
+[2025-10-19T21:56:49.043Z] GET /estadisticas-logs IP: ::1
+[2025-10-19T21:56:49.291Z] GET /favicon.ico IP: ::1
+[2025-10-19T21:56:52.592Z] GET /leer-log IP: ::1
+[2025-10-19T21:57:00.318Z] GET /archivos/listar IP: ::1
+[2025-10-19T21:59:36.975Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:02.550Z] POST /archivos/escribir IP: ::1
+[2025-10-19T22:00:02.568Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:16.616Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:16.630Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:17.299Z] GET /estadisticas-logs IP: ::1
+[2025-10-19T22:00:17.313Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:17.811Z] GET /estadisticas-logs IP: ::1
+[2025-10-19T22:00:17.822Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:18.199Z] GET /estadisticas-logs IP: ::1
+[2025-10-19T22:00:18.210Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:18.563Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:18.575Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:18.813Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:18.826Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:18.974Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:18.985Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:33.310Z] GET /exportar-logs?formato=json IP: ::1
+[2025-10-19T22:00:50.546Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:50.563Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:51.025Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:51.037Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:51.211Z] GET /leer-log IP: ::1
+[2025-10-19T22:00:51.223Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:51.601Z] GET /estadisticas-logs IP: ::1
+[2025-10-19T22:00:51.612Z] GET /archivos/listar IP: ::1
+[2025-10-19T22:00:52.406Z] GET /filtrar-logs? IP: ::1
+[2025-10-19T22:00:52.975Z] GET /filtrar-logs? IP: ::1
+[2025-10-19T22:00:53.363Z] GET /filtrar-logs? IP: ::1
+[2025-10-19T22:01:15.345Z] GET /archivos/leer?nombre=alejandro.txt IP: ::1
+[2025-10-19T22:01:15.354Z] GET /archivos/listar IP: ::1
