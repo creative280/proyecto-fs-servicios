@@ -38,3 +38,15 @@ Servidor: File System API
 [2025-10-19T22:00:53.363Z] GET /filtrar-logs? IP: ::1
 [2025-10-19T22:01:15.345Z] GET /archivos/leer?nombre=alejandro.txt IP: ::1
 [2025-10-19T22:01:15.354Z] GET /archivos/listar IP: ::1
+[2025-10-30T22:10:21.636Z] GET /archivos/listar IP: ::1
+[2025-10-30T22:10:21.817Z] GET /favicon.ico IP: ::1
+[2025-10-30T22:10:38.779Z] GET /leer-log IP: ::1
+[2025-10-30T22:10:38.815Z] GET /archivos/listar IP: ::1
+[2025-10-30T22:10:39.576Z] GET /leer-log IP: ::1
+[2025-10-30T22:10:39.594Z] GET /archivos/listar IP: ::1
+[2025-10-30T22:10:40.919Z] GET /estadisticas-logs IP: ::1
+[2025-10-30T22:10:40.938Z] GET /archivos/listar IP: ::1
+[2025-10-30T22:10:43.841Z] GET /filtrar-logs? IP: ::1
+[2025-10-30T22:10:51.134Z] GET /exportar-logs?formato=csv IP: ::1
+[2025-11-01T16:58:16.621Z] GET /archivos/listar IP: ::1
+[2025-11-01T16:58:16.712Z] GET /favicon.ico IP: ::1

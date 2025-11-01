@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "ejemplo": "node ejemplo-servidor-basico.js",
+    "ejemplo:express": "node ejemplo-servidor-express.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
